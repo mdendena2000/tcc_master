@@ -1,6 +1,8 @@
 import { pool } from "../database/pg"
 import { User } from "../models/User"
 
+const COLUMNS = "id, name, email, admin, created_at"
+
 /**
  * Camada de acesso a dados do recurso Users (Figura 10 do TCC).
  *
@@ -12,24 +14,24 @@ import { User } from "../models/User"
 export class UserRepository {
   async create(user: User): Promise<User> {
     const result = await pool.query(
-      `INSERT INTO users (id, name, email, created_at)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, name, email, created_at`,
-      [user.id, user.name, user.email, user.created_at]
+      `INSERT INTO users (id, name, email, admin, created_at)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING ${COLUMNS}`,
+      [user.id, user.name, user.email, user.admin, user.created_at]
     )
     return result.rows[0]
   }
 
   async findAll(): Promise<User[]> {
     const result = await pool.query(
-      "SELECT id, name, email, created_at FROM users ORDER BY created_at DESC"
+      `SELECT ${COLUMNS} FROM users ORDER BY created_at DESC`
     )
     return result.rows
   }
 
   async findById(id: string): Promise<User | null> {
     const result = await pool.query(
-      "SELECT id, name, email, created_at FROM users WHERE id = $1",
+      `SELECT ${COLUMNS} FROM users WHERE id = $1`,
       [id]
     )
     return result.rows[0] ?? null
@@ -37,17 +39,22 @@ export class UserRepository {
 
   async findByEmail(email: string): Promise<User | null> {
     const result = await pool.query(
-      "SELECT id, name, email, created_at FROM users WHERE email = $1",
+      `SELECT ${COLUMNS} FROM users WHERE email = $1`,
       [email]
     )
     return result.rows[0] ?? null
   }
 
-  async update(id: string, name: string, email: string): Promise<User> {
+  async update(
+    id: string,
+    name: string,
+    email: string,
+    admin: boolean
+  ): Promise<User> {
     const result = await pool.query(
-      `UPDATE users SET name = $1, email = $2 WHERE id = $3
-       RETURNING id, name, email, created_at`,
-      [name, email, id]
+      `UPDATE users SET name = $1, email = $2, admin = $3 WHERE id = $4
+       RETURNING ${COLUMNS}`,
+      [name, email, admin, id]
     )
     return result.rows[0]
   }

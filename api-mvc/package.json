@@ -7,7 +7,8 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "migrate": "ts-node --transpileOnly src/database/migrate.ts",
-    "dev": "ts-node-dev --respawn --transpile-only src/app.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "smoke": "bash scripts/smoke.sh"
   },
   "keywords": [],
   "author": "",

@@ -13,8 +13,8 @@ export class UserController {
 
   async create(req: Request, res: Response) {
     try {
-      const { name, email } = req.body
-      const user = await this.model.create(name, email)
+      const { name, email, admin } = req.body
+      const user = await this.model.create(name, email, admin)
       return res.status(201).json(user)
     } catch (error) {
       return this.handleError(error, res)
@@ -41,8 +41,13 @@ export class UserController {
 
   async update(req: Request, res: Response) {
     try {
-      const { name, email } = req.body
-      const user = await this.model.update(req.params.id as string, name, email)
+      const { name, email, admin } = req.body
+      const user = await this.model.update(
+        req.params.id as string,
+        name,
+        email,
+        admin
+      )
       return res.status(200).json(user)
     } catch (error) {
       return this.handleError(error, res)
