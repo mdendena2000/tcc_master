@@ -3,7 +3,7 @@ import { NotFoundError } from "../../../domain/errors"
 import { BoardRepository } from "../../ports/BoardRepository"
 import { UserRepository } from "../../ports/UserRepository"
 
-export interface CreateBoardInput {
+interface CreateBoardInput {
   name: unknown
   owner_id: unknown
 }

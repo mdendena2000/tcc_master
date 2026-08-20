@@ -6,7 +6,7 @@ import { TaskRepository } from "../../ports/TaskRepository"
 import { UserRepository } from "../../ports/UserRepository"
 import { GetTaskById } from "./GetTaskById"
 
-export interface UpdateTaskInput {
+interface UpdateTaskInput {
   title: unknown
   description?: unknown
   priority?: unknown

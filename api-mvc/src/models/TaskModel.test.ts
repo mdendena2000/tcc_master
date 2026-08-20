@@ -173,7 +173,7 @@ describe("TaskModel", () => {
     beforeEach(() => {
       taskRepository.findById.mockResolvedValue(existingTask)
       taskRepository.findByTitleInBoard.mockResolvedValue(null)
-      taskRepository.update.mockImplementation(async (id, fields) => ({
+      taskRepository.update.mockImplementation(async (_id, fields) => ({
         ...existingTask,
         ...fields,
       }))

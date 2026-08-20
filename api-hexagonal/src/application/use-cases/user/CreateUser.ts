@@ -2,7 +2,7 @@ import { User } from "../../../domain/entities/User"
 import { ConflictError } from "../../../domain/errors"
 import { UserRepository } from "../../ports/UserRepository"
 
-export interface CreateUserInput {
+interface CreateUserInput {
   name: unknown
   email: unknown
   admin?: unknown

@@ -4,7 +4,7 @@ import { Task, TaskPriority, TaskStatus } from "../models/Task"
 const COLUMNS = `id, title, description, status, priority, board_id,
                  assignee_id, created_at, updated_at`
 
-export interface TaskUpdateFields {
+interface TaskUpdateFields {
   title: string
   description: string | null
   priority: TaskPriority

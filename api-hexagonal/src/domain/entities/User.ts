@@ -3,7 +3,7 @@ import { optionalBoolean, requireEmail, requireText } from "../validation"
 
 const NAME_MIN_LENGTH = 2
 
-export interface UserProps {
+interface UserProps {
   id: string
   name: string
   email: string

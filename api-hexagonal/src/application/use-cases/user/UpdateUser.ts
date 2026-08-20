@@ -4,7 +4,7 @@ import { requireEmail } from "../../../domain/validation"
 import { UserRepository } from "../../ports/UserRepository"
 import { GetUserById } from "./GetUserById"
 
-export interface UpdateUserInput {
+interface UpdateUserInput {
   name: unknown
   email: unknown
   admin?: unknown

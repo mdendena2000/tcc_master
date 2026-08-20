@@ -7,7 +7,6 @@
  */
 import {
   ACTIVE_STATUSES,
-  isActive,
   requireTaskStatus,
   TASK_STATUSES,
 } from "./TaskStatus"
@@ -19,9 +18,7 @@ describe("TaskStatus", () => {
 
   it("deve considerar ativos apenas todo e in_progress", () => {
     expect(ACTIVE_STATUSES).toEqual(["todo", "in_progress"])
-    expect(isActive("todo")).toBe(true)
-    expect(isActive("in_progress")).toBe(true)
-    expect(isActive("done")).toBe(false)
+    expect(ACTIVE_STATUSES).not.toContain("done")
   })
 
   it("deve aceitar valores válidos", () => {

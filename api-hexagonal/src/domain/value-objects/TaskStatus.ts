@@ -14,10 +14,6 @@ export type TaskStatus = (typeof TASK_STATUSES)[number]
 /** Status que impedem a exclusão de um quadro (RN04). */
 export const ACTIVE_STATUSES: readonly TaskStatus[] = ["todo", "in_progress"]
 
-export function isActive(status: TaskStatus): boolean {
-  return ACTIVE_STATUSES.includes(status)
-}
-
 export function requireTaskStatus(value: unknown): TaskStatus {
   if (typeof value !== "string" || !TASK_STATUSES.includes(value as TaskStatus)) {
     throw new ValidationError(

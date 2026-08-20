@@ -18,7 +18,7 @@ const NEXT_STATUS: Record<TaskStatus, TaskStatus | null> = {
   done: null,
 }
 
-export interface TaskProps {
+interface TaskProps {
   id: string
   title: string
   description: string | null

@@ -15,7 +15,7 @@ import {
 const TITLE_MIN_LENGTH = 3
 const DEFAULT_PRIORITY: TaskPriority = "medium"
 
-export interface CreateTaskInput {
+interface CreateTaskInput {
   title: unknown
   description?: unknown
   priority?: unknown
@@ -23,7 +23,7 @@ export interface CreateTaskInput {
   assignee_id?: unknown
 }
 
-export interface UpdateTaskInput {
+interface UpdateTaskInput {
   title: unknown
   description?: unknown
   priority?: unknown

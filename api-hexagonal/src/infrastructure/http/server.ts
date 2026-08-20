@@ -7,7 +7,7 @@ import { boardRoutes } from "./routes/boardRoutes"
 import { taskRoutes } from "./routes/taskRoutes"
 import { userRoutes } from "./routes/userRoutes"
 
-export interface Controllers {
+interface Controllers {
   user: UserController
   board: BoardController
   task: TaskController

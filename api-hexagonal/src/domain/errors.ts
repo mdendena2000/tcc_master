@@ -6,7 +6,7 @@
  * responsabilidade do adaptador primário (infrastructure/http), preservando a
  * independência do domínio exigida pela Seção 2.3.1 e verificada pela RNF05.
  */
-export abstract class DomainError extends Error {
+abstract class DomainError extends Error {
   constructor(message: string) {
     super(message)
     this.name = new.target.name

@@ -5,7 +5,7 @@ import { BoardRepository } from "../../ports/BoardRepository"
 import { TaskRepository } from "../../ports/TaskRepository"
 import { UserRepository } from "../../ports/UserRepository"
 
-export interface CreateTaskInput {
+interface CreateTaskInput {
   title: unknown
   description?: unknown
   priority?: unknown

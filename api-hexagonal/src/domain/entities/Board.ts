@@ -3,7 +3,7 @@ import { requireText, requireUuid } from "../validation"
 
 const NAME_MIN_LENGTH = 3
 
-export interface BoardProps {
+interface BoardProps {
   id: string
   name: string
   ownerId: string
