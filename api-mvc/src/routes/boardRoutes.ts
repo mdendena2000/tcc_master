@@ -1,9 +1,6 @@
 import { Router } from "express"
 import { BoardController } from "../controllers/BoardController"
 
-/**
- * Mapeamento HTTP -> Controller do recurso Boards (Tabela 13 do TCC).
- */
 const boardRoutes = Router()
 const controller = new BoardController()
 

@@ -1,15 +1,8 @@
 import { ValidationError } from "./errors"
 
 const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const UUID_FORMAT =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const UUID_FORMAT =  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-/**
- * Validações das restrições de atributo declaradas nas Tabelas 9, 10 e 11
- * do TCC, compartilhadas pelos Models.
- */
-
-/** Texto obrigatório com tamanho mínimo; retorna o valor sem espaços nas bordas. */
 export function validateText(
   value: unknown,
   field: string,
@@ -23,7 +16,6 @@ export function validateText(
   return value.trim()
 }
 
-/** E-mail em formato válido; retorna o valor normalizado em minúsculas. */
 export function validateEmail(value: unknown): string {
   if (typeof value !== "string" || !EMAIL_FORMAT.test(value.trim())) {
     throw new ValidationError("E-mail em formato inválido")
@@ -31,12 +23,6 @@ export function validateEmail(value: unknown): string {
   return value.trim().toLowerCase()
 }
 
-/**
- * UUID em formato válido.
- *
- * Sem essa verificação, um identificador malformado chegaria ao PostgreSQL e
- * produziria erro de driver (HTTP 500) em vez da resposta 404 esperada.
- */
 export function validateUuid(value: unknown, field: string): string {
   if (typeof value !== "string" || !UUID_FORMAT.test(value)) {
     throw new ValidationError(`O campo ${field} deve ser um UUID válido`)
@@ -44,7 +30,6 @@ export function validateUuid(value: unknown, field: string): string {
   return value
 }
 
-/** Valor pertencente a um conjunto fechado, como os ENUMs da Tabela 11. */
 export function validateEnum<T extends string>(
   value: unknown,
   field: string,
@@ -58,7 +43,6 @@ export function validateEnum<T extends string>(
   return value as T
 }
 
-/** Texto opcional; retorna null quando ausente ou vazio. */
 export function validateOptionalText(
   value: unknown,
   field: string
@@ -70,7 +54,6 @@ export function validateOptionalText(
   return value.trim() || null
 }
 
-/** UUID opcional; retorna null quando ausente. */
 export function validateOptionalUuid(
   value: unknown,
   field: string
@@ -79,10 +62,6 @@ export function validateOptionalUuid(
   return validateUuid(value, field)
 }
 
-/**
- * Booleano opcional; retorna null quando ausente, permitindo ao Model
- * distinguir "não informado" de "informado como false".
- */
 export function validateOptionalBoolean(
   value: unknown,
   field: string

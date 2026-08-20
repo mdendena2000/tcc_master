@@ -2,12 +2,6 @@ import { Request, Response } from "express"
 import { UserModel } from "../models/UserModel"
 import { AppError } from "../models/errors"
 
-/**
- * Controller do recurso Users (Tabela 12 do TCC).
- *
- * No MVC adaptado a APIs REST, a camada View é substituída pela serialização
- * das respostas em JSON, realizada aqui.
- */
 export class UserController {
   private model = new UserModel()
 

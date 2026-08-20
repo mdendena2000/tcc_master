@@ -1,12 +1,3 @@
-/**
- * Testes do UserModel (MVC).
- *
- * O UserModel instancia diretamente a classe concreta UserRepository. Para
- * testá-lo sem banco real é preciso interceptar o módulo com jest.mock, o que
- * acopla o teste a um detalhe de implementação: ele precisa saber qual módulo
- * o Model importa. Esse uso é contabilizado no indicador de proporção entre
- * mocks de módulo e fakes de porta descrito na Seção 3.7.2c do TCC.
- */
 jest.mock("../repositories/UserRepository")
 
 import { UserModel } from "./UserModel"

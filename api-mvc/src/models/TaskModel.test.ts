@@ -1,14 +1,3 @@
-/**
- * Testes do TaskModel (MVC).
- *
- * O Model instancia diretamente três classes concretas de repositório, o que
- * exige interceptar três módulos com jest.mock. Essas ocorrências integram o
- * indicador de proporção entre mocks de módulo e fakes de porta descrito na
- * Seção 3.7.2c do TCC.
- *
- * A RN02 não é exercitada aqui: no MVC ela reside no TaskController e é
- * testada em TaskController.test.ts.
- */
 jest.mock("../repositories/TaskRepository")
 jest.mock("../repositories/BoardRepository")
 jest.mock("../repositories/UserRepository")

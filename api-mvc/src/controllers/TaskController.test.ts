@@ -1,16 +1,3 @@
-/**
- * Testes da RN02 no MVC (TaskController).
- *
- * Este arquivo evidencia empiricamente o custo estrutural apontado na Seção
- * 4.8 do TCC: como a RN02 reside no Controller, exercitá-la exige simular os
- * objetos Request e Response do Express. A regra não pode ser invocada
- * diretamente — é preciso montar `req.body`, `req.params` e capturar a
- * resposta por meio de `res.status().json()`.
- *
- * Na Arquitetura Hexagonal a mesma regra é encapsulada em Task.changeStatus()
- * e testada por chamada direta, sem andaime de infraestrutura. A comparação
- * entre os dois arquivos de teste é um dado do experimento.
- */
 jest.mock("../models/TaskModel")
 
 import { Request, Response } from "express"
@@ -36,7 +23,6 @@ function taskWithStatus(status: TaskStatus): Task {
   }
 }
 
-/** Andaime necessário para exercitar uma regra que vive no Controller. */
 function mockResponse() {
   const res = {} as Response
   res.status = jest.fn().mockReturnValue(res)

@@ -1,0 +1,32 @@
+{
+  "name": "api-hexagonal",
+  "version": "1.0.0",
+  "description": "API em Arquitetura Hexagonal para o experimento comparativo do TCC",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "migrate": "ts-node --transpileOnly src/infrastructure/database/migrate.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "pg": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^25.3.0",
+    "@types/pg": "^8.16.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.6",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}

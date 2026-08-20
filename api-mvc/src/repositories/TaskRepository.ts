@@ -11,12 +11,6 @@ export interface TaskUpdateFields {
   assignee_id: string | null
 }
 
-/**
- * Camada de acesso a dados do recurso Tasks (Figura 10 do TCC).
- *
- * Classe concreta, sem interface, seguindo a mesma decisão adotada nos demais
- * repositórios (Seção 4.9).
- */
 export class TaskRepository {
   async create(task: Task): Promise<Task> {
     const result = await pool.query(
@@ -39,7 +33,6 @@ export class TaskRepository {
     return result.rows[0]
   }
 
-  /** Lista as tarefas, opcionalmente filtrando por quadro (Tabela 14). */
   async findAll(boardId?: string): Promise<Task[]> {
     if (boardId) {
       const result = await pool.query(
@@ -63,7 +56,6 @@ export class TaskRepository {
     return result.rows[0] ?? null
   }
 
-  /** Consulta usada para verificar a RN05: título único dentro do quadro. */
   async findByTitleInBoard(boardId: string, title: string): Promise<Task | null> {
     const result = await pool.query(
       `SELECT ${COLUMNS} FROM tasks WHERE board_id = $1 AND title = $2`,

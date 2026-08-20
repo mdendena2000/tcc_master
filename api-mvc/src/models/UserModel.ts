@@ -66,14 +66,12 @@ export class UserModel {
 
     const user = await this.findById(id)
 
-    // RN01: o e-mail pode permanecer o mesmo, mas não pode pertencer a outro usuário
     const emailOwner = await this.repository.findByEmail(validEmail)
+
     if (emailOwner && emailOwner.id !== id) {
       throw new ConflictError("E-mail já cadastrado")
     }
 
-    // Omitir admin preserva o perfil atual, evitando rebaixar um
-    // administrador por engano quando o campo não é enviado.
     return this.repository.update(
       id,
       validName,

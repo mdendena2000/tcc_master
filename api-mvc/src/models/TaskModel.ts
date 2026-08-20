@@ -30,21 +30,6 @@ export interface UpdateTaskInput {
   assignee_id?: unknown
 }
 
-/**
- * Model do recurso Tasks: concentra as regras de negócio de criação e
- * atualização e delega a persistência ao TaskRepository.
- *
- * Regras aplicadas:
- *   - RN03: o responsável (assignee) deve existir no sistema.
- *   - RN05: não podem existir duas tarefas com o mesmo título no mesmo quadro.
- *   - Restrições da Tabela 11: título com no mínimo 3 caracteres, status com
- *     padrão todo e prioridade com padrão medium.
- *
- * A RN02 (transição controlada de status) não é tratada aqui: conforme a
- * Seção 4.8 do TCC, no MVC ela reside no TaskController, acoplada ao
- * framework HTTP. Esse posicionamento é o contraste medido pelo experimento
- * em relação à Arquitetura Hexagonal, onde a regra é encapsulada na entidade.
- */
 export class TaskModel {
   private repository = new TaskRepository()
   private boardRepository = new BoardRepository()

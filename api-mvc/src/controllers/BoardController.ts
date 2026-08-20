@@ -2,9 +2,6 @@ import { Request, Response } from "express"
 import { BoardModel } from "../models/BoardModel"
 import { AppError } from "../models/errors"
 
-/**
- * Controller do recurso Boards (Tabela 13 do TCC).
- */
 export class BoardController {
   private model = new BoardModel()
 

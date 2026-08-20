@@ -1,12 +1,6 @@
 import { pool } from "../database/pg"
 import { Board } from "../models/Board"
 
-/**
- * Camada de acesso a dados do recurso Boards (Figura 10 do TCC).
- *
- * Classe concreta, sem interface, seguindo a mesma decisão adotada no
- * UserRepository (Seção 4.9).
- */
 export class BoardRepository {
   async create(board: Board): Promise<Board> {
     const result = await pool.query(
@@ -37,11 +31,6 @@ export class BoardRepository {
     await pool.query("DELETE FROM boards WHERE id = $1", [id])
   }
 
-  /**
-   * Quantidade de tarefas do quadro ainda não concluídas, ou seja, com status
-   * todo ou in_progress. Consulta usada para verificar a RN04 antes da
-   * exclusão do quadro.
-   */
   async countActiveTasks(boardId: string): Promise<number> {
     const result = await pool.query(
       `SELECT COUNT(*) AS total FROM tasks

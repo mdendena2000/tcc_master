@@ -3,14 +3,6 @@ import { User } from "../models/User"
 
 const COLUMNS = "id, name, email, admin, created_at"
 
-/**
- * Camada de acesso a dados do recurso Users (Figura 10 do TCC).
- *
- * Classe concreta, sem interface: no MVC adotado neste trabalho o Model
- * depende diretamente desta implementação. A inversão dessa dependência por
- * meio de uma porta é característica exclusiva da versão Hexagonal
- * (Seção 4.9).
- */
 export class UserRepository {
   async create(user: User): Promise<User> {
     const result = await pool.query(

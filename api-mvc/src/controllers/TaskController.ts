@@ -4,27 +4,12 @@ import { TaskStatus, TASK_STATUSES } from "../models/Task"
 import { AppError, ConflictError } from "../models/errors"
 import { validateEnum } from "../models/validators"
 
-/**
- * Sequência permitida de transição de status (RN02):
- * todo -> in_progress -> done. Retrocessos e saltos não são permitidos.
- */
 const NEXT_STATUS: Record<TaskStatus, TaskStatus | null> = {
   todo: "in_progress",
   in_progress: "done",
   done: null,
 }
 
-/**
- * Controller do recurso Tasks (Tabela 14 do TCC).
- *
- * A RN02 é implementada aqui, e não no Model. Conforme a Seção 4.8, no MVC
- * essa regra "tende a ficar concentrada no Controller", o que a torna
- * dependente do framework HTTP: sua validação exige simular objetos Request e
- * Response, em vez de exercitar a regra diretamente. Esse posicionamento é
- * intencional — é o contraste que o experimento mede em relação à
- * Arquitetura Hexagonal, onde a RN02 é encapsulada no método changeStatus()
- * da entidade Task e testada sem qualquer dependência externa.
- */
 export class TaskController {
   private model = new TaskModel()
 
@@ -64,18 +49,11 @@ export class TaskController {
     }
   }
 
-  /**
-   * PATCH /tasks/:id/status — RN02.
-   *
-   * A regra de transição é avaliada neste método, entre a leitura do corpo da
-   * requisição e a montagem da resposta.
-   */
   async updateStatus(req: Request, res: Response) {
     try {
       const status = validateEnum(req.body.status, "status", TASK_STATUSES)
       const task = await this.model.findById(req.params.id as string)
 
-      // RN02: o status só pode avançar para o próximo da sequência
       if (NEXT_STATUS[task.status] !== status) {
         throw new ConflictError(
           `Transição de status inválida: ${task.status} -> ${status}`

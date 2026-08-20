@@ -1,13 +1,6 @@
 import { Router } from "express"
 import { UserController } from "../controllers/UserController"
 
-/**
- * Mapeamento HTTP -> Controller do recurso Users (Tabela 12 do TCC).
- *
- * Isolar as rotas em um módulo próprio delimita o acoplamento ao framework
- * HTTP, relevante para o Cenário B do experimento de substituição de
- * componentes (Express -> Fastify, Seção 3.7.3).
- */
 const userRoutes = Router()
 const controller = new UserController()
 

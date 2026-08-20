@@ -1,11 +1,3 @@
-/**
- * Testes do BoardModel (MVC).
- *
- * Como o Model instancia diretamente as classes concretas BoardRepository e
- * UserRepository, os testes precisam interceptar os dois módulos com
- * jest.mock. Essas ocorrências integram o indicador de proporção entre mocks
- * de módulo e fakes de porta descrito na Seção 3.7.2c do TCC.
- */
 jest.mock("../repositories/BoardRepository")
 jest.mock("../repositories/UserRepository")
 
