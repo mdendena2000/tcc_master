@@ -72,3 +72,12 @@ export function validateOptionalBoolean(
   }
   return value
 }
+/** Senha obrigatória com tamanho mínimo. */
+export function validatePassword(value: unknown, minLength: number): string {
+  if (typeof value !== "string" || value.length < minLength) {
+    throw new ValidationError(
+      `O campo password deve possuir no mínimo ${minLength} caracteres`
+    )
+  }
+  return value
+}

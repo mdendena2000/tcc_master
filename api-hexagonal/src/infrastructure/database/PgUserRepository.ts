@@ -2,13 +2,14 @@ import { UserRepository } from "../../application/ports/UserRepository"
 import { User } from "../../domain/entities/User"
 import { pool } from "./pg"
 
-const COLUMNS = "id, name, email, admin, created_at"
+const COLUMNS = "id, name, email, admin, password, created_at"
 
 interface UserRow {
   id: string
   name: string
   email: string
   admin: boolean
+  password: string
   created_at: Date
 }
 
@@ -23,13 +24,21 @@ interface UserRow {
 export class PgUserRepository implements UserRepository {
   async save(user: User): Promise<void> {
     await pool.query(
-      `INSERT INTO users (id, name, email, admin, created_at)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO users (id, name, email, admin, password, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6)
        ON CONFLICT (id) DO UPDATE
          SET name = EXCLUDED.name,
              email = EXCLUDED.email,
-             admin = EXCLUDED.admin`,
-      [user.id, user.name, user.email, user.admin, user.createdAt]
+             admin = EXCLUDED.admin,
+             password = EXCLUDED.password`,
+      [
+        user.id,
+        user.name,
+        user.email,
+        user.admin,
+        user.passwordHash,
+        user.createdAt,
+      ]
     )
   }
 
@@ -68,6 +77,7 @@ function toEntity(row: UserRow): User {
     name: row.name,
     email: row.email,
     admin: row.admin,
+    passwordHash: row.password,
     createdAt: row.created_at,
   })
 }

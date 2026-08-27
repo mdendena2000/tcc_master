@@ -7,8 +7,8 @@ export class UserController {
 
   async create(req: Request, res: Response) {
     try {
-      const { name, email, admin } = req.body
-      const user = await this.model.create(name, email, admin)
+      const { name, email, password, admin } = req.body
+      const user = await this.model.create(name, email, password, admin)
       return res.status(201).json(user)
     } catch (error) {
       return this.handleError(error, res)
@@ -35,12 +35,13 @@ export class UserController {
 
   async update(req: Request, res: Response) {
     try {
-      const { name, email, admin } = req.body
+      const { name, email, admin, password } = req.body
       const user = await this.model.update(
         req.params.id as string,
         name,
         email,
-        admin
+        admin,
+        password
       )
       return res.status(200).json(user)
     } catch (error) {
@@ -52,6 +53,16 @@ export class UserController {
     try {
       await this.model.delete(req.params.id as string)
       return res.status(204).send()
+    } catch (error) {
+      return this.handleError(error, res)
+    }
+  }
+
+  async login(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body
+      const user = await this.model.authenticate(email, password)
+      return res.status(200).json(user)
     } catch (error) {
       return this.handleError(error, res)
     }

@@ -1,4 +1,5 @@
 import { Request, Response } from "express"
+import { AuthenticateUser } from "../../../application/use-cases/user/AuthenticateUser"
 import { CreateUser } from "../../../application/use-cases/user/CreateUser"
 import { DeleteUser } from "../../../application/use-cases/user/DeleteUser"
 import { GetUserById } from "../../../application/use-cases/user/GetUserById"
@@ -20,7 +21,8 @@ export class UserController {
     private readonly listUsers: ListUsers,
     private readonly getUserById: GetUserById,
     private readonly updateUser: UpdateUser,
-    private readonly deleteUser: DeleteUser
+    private readonly deleteUser: DeleteUser,
+    private readonly authenticateUser: AuthenticateUser
   ) {}
 
   async create(req: Request, res: Response) {
@@ -53,6 +55,17 @@ export class UserController {
   async update(req: Request, res: Response) {
     try {
       const user = await this.updateUser.execute(req.params.id, req.body)
+      return res.status(200).json(UserPresenter.toJSON(user))
+    } catch (error) {
+      return sendError(error, res)
+    }
+  }
+
+  /** POST /login — valida as credenciais e devolve o usuário autenticado. */
+  async login(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body
+      const user = await this.authenticateUser.execute(email, password)
       return res.status(200).json(UserPresenter.toJSON(user))
     } catch (error) {
       return sendError(error, res)

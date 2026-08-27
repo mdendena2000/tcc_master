@@ -21,3 +21,6 @@ export class NotFoundError extends DomainError {}
 
 /** Violação de regra de unicidade ou de estado. */
 export class ConflictError extends DomainError {}
+
+/** Credenciais inválidas na autenticação. */
+export class UnauthorizedError extends DomainError {}

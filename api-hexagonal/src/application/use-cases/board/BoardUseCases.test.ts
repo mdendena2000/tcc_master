@@ -41,7 +41,7 @@ describe("Casos de uso de Boards", () => {
   beforeEach(async () => {
     boards = new InMemoryBoardRepository()
     users = new InMemoryUserRepository()
-    owner = User.create({ name: "João", email: "joao@email.com" })
+    owner = User.create({ name: "João", email: "joao@email.com", password: "senha123" })
     await users.save(owner)
   })
 

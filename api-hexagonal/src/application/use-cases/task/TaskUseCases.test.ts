@@ -39,7 +39,7 @@ describe("Casos de uso de Tasks", () => {
     boards = new InMemoryBoardRepository()
     users = new InMemoryUserRepository()
 
-    assignee = User.create({ name: "João", email: "joao@email.com" })
+    assignee = User.create({ name: "João", email: "joao@email.com", password: "senha123" })
     await users.save(assignee)
 
     board = Board.create({ name: "Sprint 1", ownerId: assignee.id })

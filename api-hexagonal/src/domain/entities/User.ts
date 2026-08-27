@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto"
 import { optionalBoolean, requireEmail, requireText } from "../validation"
+import { Password } from "../value-objects/Password"
 
 const NAME_MIN_LENGTH = 2
 
@@ -8,6 +9,7 @@ interface UserProps {
   name: string
   email: string
   admin: boolean
+  passwordHash: string
   createdAt: Date
 }
 
@@ -28,6 +30,7 @@ export class User {
     private _name: string,
     private _email: string,
     private _admin: boolean,
+    private _password: Password,
     public readonly createdAt: Date
   ) {}
 
@@ -35,6 +38,7 @@ export class User {
   static create(input: {
     name: unknown
     email: unknown
+    password: unknown
     admin?: unknown
   }): User {
     return new User(
@@ -42,6 +46,7 @@ export class User {
       requireText(input.name, "name", NAME_MIN_LENGTH),
       requireEmail(input.email),
       optionalBoolean(input.admin, "admin") ?? false,
+      Password.create(input.password),
       new Date()
     )
   }
@@ -57,6 +62,7 @@ export class User {
       props.name,
       props.email,
       props.admin,
+      Password.fromHash(props.passwordHash),
       props.createdAt
     )
   }
@@ -71,6 +77,24 @@ export class User {
 
   get admin(): boolean {
     return this._admin
+  }
+
+  /**
+   * Hash da senha, exposto apenas para persistência pelo adaptador de saída.
+   * O valor em texto nunca é armazenado na entidade.
+   */
+  get passwordHash(): string {
+    return this._password.hash
+  }
+
+  /** Verifica a senha informada na autenticação. */
+  authenticate(plain: unknown): boolean {
+    return this._password.matches(plain)
+  }
+
+  /** Troca a senha, revalidando o tamanho mínimo. */
+  changePassword(plain: unknown): void {
+    this._password = Password.create(plain)
   }
 
   rename(name: unknown): void {

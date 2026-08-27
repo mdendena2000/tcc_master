@@ -5,6 +5,7 @@ import { UserRepository } from "../../ports/UserRepository"
 interface CreateUserInput {
   name: unknown
   email: unknown
+  password: unknown
   admin?: unknown
 }
 

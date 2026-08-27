@@ -1,15 +1,22 @@
 import { pool } from "../database/pg"
 import { User } from "../models/User"
 
+/**
+ * Colunas devolvidas nas consultas comuns.
+ *
+ * password é deliberadamente omitido: como o Controller serializa o
+ * objeto do Model diretamente em JSON, incluir a coluna aqui exporia o hash
+ * nas respostas da API. A senha só é lida pela consulta de autenticação.
+ */
 const COLUMNS = "id, name, email, admin, created_at"
 
 export class UserRepository {
-  async create(user: User): Promise<User> {
+  async create(user: User, passwordHash: string): Promise<User> {
     const result = await pool.query(
-      `INSERT INTO users (id, name, email, admin, created_at)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO users (id, name, email, admin, password, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING ${COLUMNS}`,
-      [user.id, user.name, user.email, user.admin, user.created_at]
+      [user.id, user.name, user.email, user.admin, passwordHash, user.created_at]
     )
     return result.rows[0]
   }
@@ -37,6 +44,15 @@ export class UserRepository {
     return result.rows[0] ?? null
   }
 
+  /** Consulta usada apenas na autenticação (POST /login). */
+  async findPasswordHashByEmail(email: string): Promise<string | null> {
+    const result = await pool.query(
+      "SELECT password FROM users WHERE email = $1",
+      [email]
+    )
+    return result.rows[0]?.password ?? null
+  }
+
   async update(
     id: string,
     name: string,
@@ -49,6 +65,13 @@ export class UserRepository {
       [name, email, admin, id]
     )
     return result.rows[0]
+  }
+
+  async updatePassword(id: string, passwordHash: string): Promise<void> {
+    await pool.query("UPDATE users SET password = $1 WHERE id = $2", [
+      passwordHash,
+      id,
+    ])
   }
 
   async delete(id: string): Promise<void> {

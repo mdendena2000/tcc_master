@@ -8,6 +8,7 @@ interface UpdateUserInput {
   name: unknown
   email: unknown
   admin?: unknown
+  password?: unknown
 }
 
 /**
@@ -42,6 +43,12 @@ export class UpdateUser {
     user.rename(input.name)
     user.changeEmail(novoEmail)
     user.changeAdmin(input.admin)
+
+    // A senha só é trocada quando informada
+    const { password } = input
+    if (password !== undefined && password !== null && password !== "") {
+      user.changePassword(password)
+    }
 
     await this.repository.save(user)
     return user

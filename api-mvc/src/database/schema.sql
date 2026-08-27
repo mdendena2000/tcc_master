@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
   name       VARCHAR(255) NOT NULL,
   email      VARCHAR(255) NOT NULL,
   admin      BOOLEAN NOT NULL DEFAULT FALSE,
+  password VARCHAR(255) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -22,6 +23,12 @@ ALTER TABLE users
 -- interface da aplicação.
 ALTER TABLE users
   ADD COLUMN IF NOT EXISTS admin BOOLEAN NOT NULL DEFAULT FALSE;
+
+-- Hash da senha (scrypt), no formato "salt:derivada". O DEFAULT vazio existe
+-- apenas para tornar a migração idempotente em bancos já criados; um hash
+-- vazio nunca casa com nenhuma senha, então esses usuários não autenticam.
+ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS password VARCHAR(255) NOT NULL DEFAULT '';
 
 -- RN01 no nível do banco: e-mail único no sistema. O índice único substitui
 -- o índice comum usado anteriormente e também atende às consultas por e-mail.

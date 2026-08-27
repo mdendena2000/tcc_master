@@ -11,6 +11,7 @@ import { UserController } from "../controllers/UserController"
 export function userRoutes(controller: UserController): Router {
   const routes = Router()
 
+  routes.post("/login", (req, res) => controller.login(req, res))
   routes.post("/users", (req, res) => controller.create(req, res))
   routes.get("/users", (req, res) => controller.findAll(req, res))
   routes.get("/users/:id", (req, res) => controller.findById(req, res))

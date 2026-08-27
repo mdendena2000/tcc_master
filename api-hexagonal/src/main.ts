@@ -9,6 +9,7 @@ import { DeleteTask } from "./application/use-cases/task/DeleteTask"
 import { GetTaskById } from "./application/use-cases/task/GetTaskById"
 import { ListTasks } from "./application/use-cases/task/ListTasks"
 import { UpdateTask } from "./application/use-cases/task/UpdateTask"
+import { AuthenticateUser } from "./application/use-cases/user/AuthenticateUser"
 import { CreateUser } from "./application/use-cases/user/CreateUser"
 import { DeleteUser } from "./application/use-cases/user/DeleteUser"
 import { GetUserById } from "./application/use-cases/user/GetUserById"
@@ -38,7 +39,8 @@ const userController = new UserController(
   new ListUsers(userRepository),
   new GetUserById(userRepository),
   new UpdateUser(userRepository),
-  new DeleteUser(userRepository)
+  new DeleteUser(userRepository),
+  new AuthenticateUser(userRepository)
 )
 
 const boardController = new BoardController(
