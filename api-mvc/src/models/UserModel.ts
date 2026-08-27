@@ -15,15 +15,10 @@ const NAME_MIN_LENGTH = 2
 const PASSWORD_MIN_LENGTH = 6
 
 /**
- * Model do recurso Users: concentra as regras de negócio e delega a
- * persistência ao UserRepository, conforme o fluxo
- * Controller -> Model -> Repository -> PostgreSQL (Figura 2 e Seção 4.8).
- *
- * Regras aplicadas:
- *   - RN01: unicidade de e-mail no sistema.
- *   - Restrições da Tabela 9: nome com no mínimo 2 caracteres, e-mail em
- *     formato válido e senha com no mínimo 6 caracteres.
- *   - admin é opcional e assume false na criação.
+ * Regras aplicadas: - RN01: unicidade de e-mail no sistema. - Restrições da
+ * Tabela 9: nome com no mínimo 2 caracteres, e-mail em formato válido e
+ * senha com no mínimo 6 caracteres. - admin é opcional e assume false na
+ * criação.
  */
 export class UserModel {
   private repository = new UserRepository()

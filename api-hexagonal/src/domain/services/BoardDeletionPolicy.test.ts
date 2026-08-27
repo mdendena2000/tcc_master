@@ -1,12 +1,6 @@
 /**
- * Testes da RN04 (Hexagonal).
- *
  * A regra é um serviço de domínio puro: recebe um número e decide. Não há
  * repositório, dublê, mock ou fake — a chamada é direta.
- *
- * No MVC a mesma regra está dentro de BoardModel.delete(), entre duas
- * chamadas ao repositório concreto, e só pode ser exercitada interceptando o
- * módulo com jest.mock (Seção 3.7.2c).
  */
 import { BoardDeletionPolicy } from "./BoardDeletionPolicy"
 import { ConflictError } from "../errors"

@@ -1,14 +1,3 @@
-/**
- * Testes da entidade User (Hexagonal).
- *
- * A entidade não depende de nada: nenhum import de infraestrutura, nenhum
- * jest.mock, nenhum dublê. As invariantes da Tabela 9 são exercitadas por
- * chamada direta.
- *
- * No MVC equivalente não existe arquivo correspondente: como User é apenas
- * uma interface de dados, suas restrições só podem ser verificadas através do
- * UserModel, que exige interceptar o módulo do repositório (Seção 3.7.2c).
- */
 import { User } from "./User"
 
 describe("User", () => {

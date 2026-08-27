@@ -11,9 +11,7 @@ interface BoardRow {
   created_at: Date
 }
 
-/**
- * Adaptador de saída: implementação PostgreSQL da porta BoardRepository.
- */
+/** Adaptador de saída: implementação PostgreSQL da porta BoardRepository. */
 export class PgBoardRepository implements BoardRepository {
   async save(board: Board): Promise<void> {
     await pool.query(

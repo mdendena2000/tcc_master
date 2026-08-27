@@ -13,13 +13,7 @@ interface CreateTaskInput {
   assignee_id?: unknown
 }
 
-/**
- * Cria uma tarefa aplicando a RN03 e a RN05.
- *
- * As três portas são recebidas por injeção. As invariantes de formato são
- * impostas pela entidade; as regras que dependem de consulta ficam aqui, e a
- * decisão da RN05 é delegada ao serviço de domínio.
- */
+/** Cria uma tarefa aplicando a RN03 e a RN05. */
 export class CreateTask {
   constructor(
     private readonly tasks: TaskRepository,
@@ -36,7 +30,6 @@ export class CreateTask {
       assigneeId: input.assignee_id,
     })
 
-    // board_id é chave estrangeira para Board (Tabela 11)
     if (!(await this.boards.findById(task.boardId))) {
       throw new NotFoundError("Quadro não encontrado")
     }

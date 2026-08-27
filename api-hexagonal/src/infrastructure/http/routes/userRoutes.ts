@@ -2,11 +2,9 @@ import { Router } from "express"
 import { UserController } from "../controllers/UserController"
 
 /**
- * Mapeamento HTTP -> Controller do recurso Users (Tabela 12 do TCC).
- *
- * O controller é recebido como parâmetro, e não instanciado aqui: a
- * montagem do grafo de dependências acontece exclusivamente no
- * composition root (main.ts).
+ * O controller é recebido como parâmetro, e não instanciado aqui: a montagem
+ * do grafo de dependências acontece exclusivamente no composition root
+ * (main.ts).
  */
 export function userRoutes(controller: UserController): Router {
   const routes = Router()

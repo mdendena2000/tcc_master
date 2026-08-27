@@ -1,14 +1,8 @@
 /**
- * Testes dos casos de uso do recurso Users (Hexagonal).
- *
- * Os casos de uso dependem da porta UserRepository, então o teste substitui a
- * porta por um fake em memória construído a partir da interface. Não há
+ * Os casos de uso dependem da porta UserRepository, então o teste substitui
+ * a porta por um fake em memória construído a partir da interface. Não há
  * nenhum jest.mock: o teste desconhece qual banco existe do outro lado e não
  * quebraria se o PostgreSQL fosse trocado.
- *
- * Contraste medido pela Seção 3.7.2c: o UserModel.test.ts do MVC precisa
- * interceptar o módulo do repositório com jest.mock para alcançar o mesmo
- * isolamento.
  */
 import { InMemoryUserRepository } from "../../../test-support/InMemoryRepositories"
 import { AuthenticateUser } from "./AuthenticateUser"

@@ -23,7 +23,6 @@ export class CreateBoard {
   async execute(input: CreateBoardInput): Promise<Board> {
     const board = Board.create({ name: input.name, ownerId: input.owner_id })
 
-    // owner_id é chave estrangeira para User (Tabela 10)
     if (!(await this.users.findById(board.ownerId))) {
       throw new NotFoundError("Usuário não encontrado")
     }

@@ -1,10 +1,6 @@
 /**
  * Fakes das portas, usados pelos testes dos casos de uso.
  *
- * Implementam os contratos declarados em application/ports. Escrevê-los é o
- * custo que a Arquitetura Hexagonal cobra em troca de testes que não
- * interceptam módulos: nenhum teste precisa saber que existe PostgreSQL.
- *
  * Excluídos do cálculo de cobertura (jest.config.js), por serem código de
  * apoio a testes e não da aplicação.
  */
@@ -59,7 +55,6 @@ export class InMemoryBoardRepository implements BoardRepository {
 
 export class InMemoryTaskRepository implements TaskRepository {
   public tasks: Task[] = []
-  /** Registra os status recebidos, para verificar quem define a RN04. */
   public statusesRecebidos: readonly TaskStatus[] = []
 
   async save(task: Task): Promise<void> {

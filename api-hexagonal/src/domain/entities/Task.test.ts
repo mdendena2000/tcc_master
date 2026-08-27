@@ -1,14 +1,3 @@
-/**
- * Testes da RN02 e das invariantes da entidade Task (Hexagonal).
- *
- * Este arquivo é o par direto de TaskController.test.ts do MVC.
- *
- * Aqui a RN02 é invocada diretamente — task.changeStatus("done") — sem
- * servidor HTTP, sem objetos Request e Response simulados, sem jest.mock e
- * sem qualquer dublê. No MVC, a mesma regra vive no Controller e exige duas
- * funções de andaime (mockRequest e mockResponse) e a verificação indireta
- * por meio de res.status(), conforme previsto na Seção 4.8 do TCC.
- */
 import { Task } from "./Task"
 import { ConflictError } from "../errors"
 import { TaskStatus } from "../value-objects/TaskStatus"
@@ -16,7 +5,6 @@ import { TaskStatus } from "../value-objects/TaskStatus"
 const BOARD_ID = "9c858901-8a57-4791-81fe-4c455b099bc9"
 const ASSIGNEE_ID = "3f2504e0-4f89-41d3-9a0c-0305e82c3301"
 
-/** Constrói uma tarefa já no status desejado, avançando pela própria regra. */
 function tarefaEm(status: TaskStatus): Task {
   const task = Task.create({ title: "Escrever capítulo 4", boardId: BOARD_ID })
   if (status === "in_progress" || status === "done") task.changeStatus("in_progress")

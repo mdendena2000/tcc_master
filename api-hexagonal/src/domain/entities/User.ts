@@ -14,13 +14,6 @@ interface UserProps {
 }
 
 /**
- * Entidade User (Tabela 9 do TCC).
- *
- * Diferentemente do MVC, onde User é apenas uma interface de dados e as
- * regras vivem no UserModel, aqui a entidade encapsula suas próprias
- * invariantes: não é possível construir um User com nome curto ou e-mail
- * inválido. As validações são exercitáveis sem infraestrutura.
- *
  * A RN01 (unicidade de e-mail) não pertence à entidade: depende de consultar
  * os demais usuários, e por isso é orquestrada pelos casos de uso.
  */
@@ -34,7 +27,6 @@ export class User {
     public readonly createdAt: Date
   ) {}
 
-  /** Cria um novo usuário, validando as invariantes da Tabela 9. */
   static create(input: {
     name: unknown
     email: unknown
@@ -80,19 +72,17 @@ export class User {
   }
 
   /**
-   * Hash da senha, exposto apenas para persistência pelo adaptador de saída.
-   * O valor em texto nunca é armazenado na entidade.
+   * Hash da senha, exposto apenas para persistência pelo adaptador de saída. O
+   * valor em texto nunca é armazenado na entidade.
    */
   get passwordHash(): string {
     return this._password.hash
   }
 
-  /** Verifica a senha informada na autenticação. */
   authenticate(plain: unknown): boolean {
     return this._password.matches(plain)
   }
 
-  /** Troca a senha, revalidando o tamanho mínimo. */
   changePassword(plain: unknown): void {
     this._password = Password.create(plain)
   }
@@ -105,7 +95,6 @@ export class User {
     this._email = requireEmail(email)
   }
 
-  /** Omitir o valor preserva o perfil atual. */
   changeAdmin(admin: unknown): void {
     const valor = optionalBoolean(admin, "admin")
     if (valor !== null) this._admin = valor

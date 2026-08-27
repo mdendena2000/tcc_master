@@ -1,9 +1,5 @@
 import { Task } from "../../../domain/entities/Task"
 
-/**
- * Traduz a entidade Task para o formato de resposta da API, preservando a
- * paridade com a implementação MVC (RNF01).
- */
 export const TaskPresenter = {
   toJSON(task: Task) {
     return {

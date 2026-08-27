@@ -8,13 +8,6 @@ import { UpdateUser } from "../../../application/use-cases/user/UpdateUser"
 import { sendError } from "../errorMapper"
 import { UserPresenter } from "../presenters/UserPresenter"
 
-/**
- * Adaptador primário (inbound) do recurso Users (Tabela 12 do TCC).
- *
- * Sua responsabilidade se limita a traduzir HTTP para chamadas de casos de
- * uso e o resultado de volta para HTTP. Nenhuma regra de negócio reside aqui
- * — contraste direto com o TaskController do MVC, que hospeda a RN02.
- */
 export class UserController {
   constructor(
     private readonly createUser: CreateUser,
@@ -61,7 +54,6 @@ export class UserController {
     }
   }
 
-  /** POST /login — valida as credenciais e devolve o usuário autenticado. */
   async login(req: Request, res: Response) {
     try {
       const { email, password } = req.body

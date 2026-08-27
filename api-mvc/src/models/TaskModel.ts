@@ -42,7 +42,6 @@ export class TaskModel {
     const assigneeId = validateOptionalUuid(input.assignee_id, "assignee_id")
     const priority = this.resolvePriority(input.priority)
 
-    // board_id é chave estrangeira para Board (Tabela 11)
     if (!(await this.boardRepository.findById(boardId))) {
       throw new NotFoundError("Quadro não encontrado")
     }
@@ -116,7 +115,6 @@ export class TaskModel {
     return validateEnum(priority, "priority", TASK_PRIORITIES)
   }
 
-  /** RN03 */
   private async ensureAssigneeExists(assigneeId: string | null): Promise<void> {
     if (!assigneeId) return
     if (!(await this.userRepository.findById(assigneeId))) {
@@ -124,7 +122,6 @@ export class TaskModel {
     }
   }
 
-  /** RN05 */
   private async ensureTitleIsUniqueInBoard(
     boardId: string,
     title: string,

@@ -22,7 +22,6 @@ export class ConflictError extends AppError {
     super(message, 409)
   }
 }
-/** Credenciais inválidas na autenticação. */
 export class UnauthorizedError extends AppError {
   constructor(message: string) {
     super(message, 401)

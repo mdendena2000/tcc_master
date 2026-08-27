@@ -1,10 +1,4 @@
-/**
- * Testes do value object TaskStatus.
- *
- * Fixa quais status o domínio considera ativos — definição da qual a RN04
- * depende e que, no MVC, está embutida na cláusula IN da consulta SQL do
- * BoardRepository.
- */
+/** Testes do value object TaskStatus. */
 import {
   ACTIVE_STATUSES,
   requireTaskStatus,

@@ -11,8 +11,6 @@ interface BoardProps {
 }
 
 /**
- * Entidade Board (Tabela 10 do TCC).
- *
  * As invariantes de formato são impostas na própria construção. A existência
  * do proprietário depende de consultar outro agregado e por isso é
  * responsabilidade dos casos de uso, não da entidade.

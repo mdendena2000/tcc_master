@@ -4,9 +4,9 @@ import { User } from "../models/User"
 /**
  * Colunas devolvidas nas consultas comuns.
  *
- * password é deliberadamente omitido: como o Controller serializa o
- * objeto do Model diretamente em JSON, incluir a coluna aqui exporia o hash
- * nas respostas da API. A senha só é lida pela consulta de autenticação.
+ * password é deliberadamente omitido: como o Controller serializa o objeto
+ * do Model diretamente em JSON, incluir a coluna aqui exporia o hash nas
+ * respostas da API. A senha só é lida pela consulta de autenticação.
  */
 const COLUMNS = "id, name, email, admin, created_at"
 
@@ -44,7 +44,6 @@ export class UserRepository {
     return result.rows[0] ?? null
   }
 
-  /** Consulta usada apenas na autenticação (POST /login). */
   async findPasswordHashByEmail(email: string): Promise<string | null> {
     const result = await pool.query(
       "SELECT password FROM users WHERE email = $1",

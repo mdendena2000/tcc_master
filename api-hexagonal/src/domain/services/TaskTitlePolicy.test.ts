@@ -1,6 +1,3 @@
-/**
- * Testes da RN05 (Hexagonal), como serviço de domínio puro.
- */
 import { TaskTitlePolicy } from "./TaskTitlePolicy"
 import { ConflictError } from "../errors"
 

@@ -1,10 +1,3 @@
-/**
- * Testes dos casos de uso do recurso Boards (Hexagonal).
- *
- * As duas portas envolvidas são substituídas por fakes construídos a partir
- * das interfaces. Nenhum jest.mock: o teste não sabe que existe PostgreSQL do
- * outro lado e continuaria válido após o Cenário A da Seção 3.7.3.
- */
 import { Task } from "../../../domain/entities/Task"
 import { User } from "../../../domain/entities/User"
 import {
@@ -19,12 +12,10 @@ import { ListBoards } from "./ListBoards"
 
 const UUID_INEXISTENTE = "00000000-0000-0000-0000-000000000000"
 
-/** Porta de tarefas vazia. */
 function taskRepo(): InMemoryTaskRepository {
   return new InMemoryTaskRepository()
 }
 
-/** Porta de tarefas contendo n tarefas ativas (status todo) no quadro. */
 function taskRepoComAtivas(quantidade: number, boardId: string) {
   const repo = new InMemoryTaskRepository()
   for (let i = 0; i < quantidade; i++) {

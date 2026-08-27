@@ -4,8 +4,8 @@ const SALT_BYTES = 16
 const KEY_LENGTH = 64
 
 /**
- * Derivação e verificação de senha com scrypt, disponível no módulo crypto do
- * próprio Node.js.
+ * Derivação e verificação de senha com scrypt, disponível no módulo crypto
+ * do próprio Node.js.
  *
  * A escolha evita acrescentar dependências ao projeto, preservando o stack
  * compartilhado exigido pela RNF02. O hash é armazenado no formato

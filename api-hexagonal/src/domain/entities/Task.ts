@@ -7,10 +7,8 @@ import { TaskStatus } from "../value-objects/TaskStatus"
 const TITLE_MIN_LENGTH = 3
 
 /**
- * Sequência permitida de transição de status (RN02):
- * todo -> in_progress -> done. Retrocessos e saltos não são permitidos.
- *
- * A tabela vive no domínio, junto da regra que a consome.
+ * Sequência permitida de transição de status (RN02): todo -> in_progress ->
+ * done. Retrocessos e saltos não são permitidos.
  */
 const NEXT_STATUS: Record<TaskStatus, TaskStatus | null> = {
   todo: "in_progress",
@@ -30,16 +28,7 @@ interface TaskProps {
   updatedAt: Date
 }
 
-/**
- * Entidade Task (Tabela 11 do TCC).
- *
- * É a entidade central do experimento: a RN02 está encapsulada no método
- * changeStatus(), executável e verificável sem servidor HTTP e sem banco de
- * dados (Seção 4.8).
- *
- * No MVC a mesma regra reside no TaskController, entre a leitura de req.body
- * e a montagem da resposta, dependendo diretamente do framework Express.
- */
+/** Tarefa de um quadro. A transição de status vive em changeStatus(). */
 export class Task {
   private constructor(
     public readonly id: string,
@@ -107,11 +96,7 @@ export class Task {
     return this._updatedAt
   }
 
-  /**
-   * RN02: avança o status para o próximo da sequência.
-   *
-   * Recusa retrocessos, saltos de etapa e repetição do status atual.
-   */
+  /** RN02: avança um passo na sequência; recusa retrocesso e salto de etapa. */
   changeStatus(novoStatus: TaskStatus): void {
     if (NEXT_STATUS[this._status] !== novoStatus) {
       throw new ConflictError(
@@ -122,7 +107,6 @@ export class Task {
     this.touch()
   }
 
-  /** Atualização dos campos editáveis (PUT /tasks/:id). */
   updateDetails(input: {
     title: unknown
     description?: unknown

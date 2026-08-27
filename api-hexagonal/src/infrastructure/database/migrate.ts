@@ -3,9 +3,7 @@ import { readFileSync } from "fs"
 import { join } from "path"
 import { pool } from "./pg"
 
-/**
- * Aplica o esquema do banco. Executado via `npm run migrate`.
- */
+/** Aplica o esquema do banco. Executado via `npm run migrate`. */
 async function migrate() {
   const schema = readFileSync(join(__dirname, "schema.sql"), "utf-8")
   await pool.query(schema)

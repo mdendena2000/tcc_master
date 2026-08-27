@@ -2,7 +2,6 @@ import { Task } from "../../../domain/entities/Task"
 import { requireUuid } from "../../../domain/validation"
 import { TaskRepository } from "../../ports/TaskRepository"
 
-/** Lista tarefas, opcionalmente filtrando por quadro (Tabela 14). */
 export class ListTasks {
   constructor(private readonly tasks: TaskRepository) {}
 

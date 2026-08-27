@@ -1,12 +1,10 @@
 /**
- * Testes dos casos de uso do recurso Tasks (Hexagonal).
- *
  * As três portas são substituídas por fakes construídos a partir das
  * interfaces. Nenhum jest.mock.
  *
  * A RN02 não é reexercitada aqui: ela pertence à entidade e está coberta em
- * domain/entities/Task.test.ts. Este arquivo verifica apenas a orquestração —
- * que o caso de uso carrega, delega e persiste.
+ * domain/entities/Task.test.ts. Este arquivo verifica apenas a orquestração
+ * — que o caso de uso carrega, delega e persiste.
  */
 import { Board } from "../../../domain/entities/Board"
 import { Task } from "../../../domain/entities/Task"

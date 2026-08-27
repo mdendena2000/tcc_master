@@ -3,13 +3,10 @@ import { UnauthorizedError } from "../../../domain/errors"
 import { UserRepository } from "../../ports/UserRepository"
 
 /**
- * Autentica um usuário a partir de e-mail e senha (POST /login).
+ * Autentica um usuário (POST /login).
  *
- * A verificação da senha pertence à entidade (User.authenticate); ao caso de
- * uso cabe localizar o usuário e uniformizar a resposta de falha.
- *
- * A mesma mensagem é usada para e-mail inexistente e senha incorreta, para
- * não revelar quais endereços estão cadastrados.
+ * E-mail inexistente e senha errada devolvem a mesma mensagem, para não
+ * revelar quais endereços estão cadastrados.
  */
 export class AuthenticateUser {
   constructor(private readonly repository: UserRepository) {}

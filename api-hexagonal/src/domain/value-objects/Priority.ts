@@ -1,8 +1,5 @@
 import { ValidationError } from "../errors"
 
-/**
- * Value object Priority (Tabela 11 do TCC).
- */
 export const TASK_PRIORITIES = ["low", "medium", "high"] as const
 
 export type Priority = (typeof TASK_PRIORITIES)[number]
@@ -18,7 +15,6 @@ export function requirePriority(value: unknown): Priority {
   return value as Priority
 }
 
-/** Aplica o padrão medium quando a prioridade não é informada. */
 export function priorityOrDefault(value: unknown): Priority {
   if (value === undefined || value === null || value === "") {
     return DEFAULT_PRIORITY

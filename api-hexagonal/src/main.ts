@@ -23,13 +23,7 @@ import { TaskController } from "./infrastructure/http/controllers/TaskController
 import { UserController } from "./infrastructure/http/controllers/UserController"
 import { createServer } from "./infrastructure/http/server"
 
-/**
- * Composition root.
- *
- * Único ponto do sistema que conhece as implementações concretas das portas.
- * Trocar PostgreSQL por outro mecanismo (Cenário A da Seção 3.7.3) exige
- * alterar apenas as linhas que instanciam os repositórios.
- */
+/** Composition root. */
 const userRepository = new PgUserRepository()
 const boardRepository = new PgBoardRepository()
 const taskRepository = new PgTaskRepository()

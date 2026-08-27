@@ -6,9 +6,6 @@ import { ListBoards } from "../../../application/use-cases/board/ListBoards"
 import { sendError } from "../errorMapper"
 import { BoardPresenter } from "../presenters/BoardPresenter"
 
-/**
- * Adaptador primário (inbound) do recurso Boards (Tabela 13 do TCC).
- */
 export class BoardController {
   constructor(
     private readonly createBoard: CreateBoard,

@@ -6,14 +6,7 @@ import {
   ValidationError,
 } from "../../domain/errors"
 
-/**
- * Traduz erros de domínio em respostas HTTP.
- *
- * Este é o único ponto do sistema que conhece simultaneamente o vocabulário
- * do domínio e o do protocolo. O núcleo permanece sem qualquer referência a
- * códigos de status, ao contrário da versão MVC, onde o próprio erro carrega
- * o status.
- */
+/** Traduz erros de domínio em respostas HTTP. */
 export function sendError(error: unknown, res: Response) {
   if (error instanceof ValidationError) {
     return res.status(400).json({ message: error.message })

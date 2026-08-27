@@ -13,14 +13,7 @@ interface UserRow {
   created_at: Date
 }
 
-/**
- * Adaptador de saída: implementação PostgreSQL da porta UserRepository.
- *
- * Todo o SQL e todo o conhecimento do driver `pg` ficam confinados aqui.
- * Substituir o mecanismo de persistência significa escrever outra classe que
- * implemente a mesma porta, sem tocar no domínio nem nos casos de uso
- * (Cenário A da Seção 3.7.3).
- */
+/** Adaptador de saída: implementação PostgreSQL da porta UserRepository. */
 export class PgUserRepository implements UserRepository {
   async save(user: User): Promise<void> {
     await pool.query(
@@ -70,7 +63,6 @@ export class PgUserRepository implements UserRepository {
   }
 }
 
-/** Converte a linha do banco na entidade de domínio. */
 function toEntity(row: UserRow): User {
   return User.restore({
     id: row.id,

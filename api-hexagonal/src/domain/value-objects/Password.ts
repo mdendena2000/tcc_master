@@ -9,8 +9,8 @@ const MIN_LENGTH = 6
  * Value object Password.
  *
  * Encapsula a derivação e a verificação da senha, de modo que o restante do
- * sistema nunca manipula o valor em texto: a entidade User guarda um Password,
- * e não uma string.
+ * sistema nunca manipula o valor em texto: a entidade User guarda um
+ * Password, e não uma string.
  *
  * Usa scrypt do módulo crypto do Node.js, evitando dependências novas e
  * preservando o stack compartilhado exigido pela RNF02.
@@ -18,7 +18,6 @@ const MIN_LENGTH = 6
 export class Password {
   private constructor(public readonly hash: string) {}
 
-  /** Cria a partir do valor em texto, validando o tamanho mínimo. */
   static create(plain: unknown): Password {
     if (typeof plain !== "string" || plain.length < MIN_LENGTH) {
       throw new ValidationError(
@@ -31,12 +30,10 @@ export class Password {
     return new Password(`${salt}:${derived}`)
   }
 
-  /** Reconstitui a partir do hash já persistido. */
   static fromHash(hash: string): Password {
     return new Password(hash)
   }
 
-  /** Compara em tempo constante, sem revelar informação por temporização. */
   matches(plain: unknown): boolean {
     if (typeof plain !== "string") return false
 

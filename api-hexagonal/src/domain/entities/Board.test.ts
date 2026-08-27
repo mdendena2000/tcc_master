@@ -1,6 +1,3 @@
-/**
- * Testes da entidade Board (Hexagonal), sem qualquer dependência externa.
- */
 import { Board } from "./Board"
 
 const OWNER_ID = "3f2504e0-4f89-41d3-9a0c-0305e82c3301"

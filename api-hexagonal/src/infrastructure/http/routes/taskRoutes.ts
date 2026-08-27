@@ -1,9 +1,6 @@
 import { Router } from "express"
 import { TaskController } from "../controllers/TaskController"
 
-/**
- * Mapeamento HTTP -> Controller do recurso Tasks (Tabela 14 do TCC).
- */
 export function taskRoutes(controller: TaskController): Router {
   const routes = Router()
 
