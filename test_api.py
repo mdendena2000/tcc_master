@@ -291,23 +291,23 @@ def main():
         {"title": "Ainda pendente", "board_id": board_id},
         {"status": "todo"},
     )
-    # checar(
-    #     "RN04: quadro com tarefa pendente", "DELETE", f"/boards/{board_id}", 409,
-    # )
-    # checar(
-    #     "remove a tarefa pendente", "DELETE", f"/tasks/{pendente['id']}", 204,
-    # )
-    # checar(
-    #     "quadro sem tarefas ativas", "DELETE", f"/boards/{board_id}", 204,
-    # )
-    # checar("quadro já removido", "DELETE", f"/boards/{board_id}", 404)
+    checar(
+        "RN04: quadro com tarefa pendente", "DELETE", f"/boards/{board_id}", 409,
+    )
+    checar(
+        "remove a tarefa pendente", "DELETE", f"/tasks/{pendente['id']}", 204,
+    )
+    checar(
+        "quadro sem tarefas ativas", "DELETE", f"/boards/{board_id}", 204,
+    )
+    checar("quadro já removido", "DELETE", f"/boards/{board_id}", 404)
 
-    # secao("LIMPEZA")
-    # checar("remove usuário criado", "DELETE", f"/users/{user_id}", 204)
-    # for usuario in chamar("GET", "/users")[1] or []:
-    #     if marca in usuario["email"]:
-    #         chamar("DELETE", f"/users/{usuario['id']}")
-    # print(f"{CINZA}       registros de teste removidos{RESET}")
+    secao("LIMPEZA")
+    checar("remove usuário criado", "DELETE", f"/users/{user_id}", 204)
+    for usuario in chamar("GET", "/users")[1] or []:
+        if marca in usuario["email"]:
+            chamar("DELETE", f"/users/{usuario['id']}")
+    print(f"{CINZA}       registros de teste removidos{RESET}")
 
     # ---------------------------------------------------------- resultado
     print()

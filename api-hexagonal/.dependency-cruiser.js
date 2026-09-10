@@ -35,14 +35,14 @@ module.exports = {
       severity: "error",
       comment: "Nenhum módulo do núcleo pode importar o framework HTTP.",
       from: { path: "^src/(domain|application)" },
-      to: { dependencyTypes: ["npm"], path: "^(express|cors)$" },
+      to: { dependencyTypes: ["npm"], path: "^node_modules/(express|cors)" },
     },
     {
       name: "nucleo-sem-driver-de-banco",
       severity: "error",
       comment: "Nenhum módulo do núcleo pode importar o driver do banco.",
       from: { path: "^src/(domain|application)" },
-      to: { dependencyTypes: ["npm"], path: "^pg$" },
+      to: { dependencyTypes: ["npm"], path: "^node_modules/pg(/|$)" },
     },
     {
       name: "sem-ciclos",

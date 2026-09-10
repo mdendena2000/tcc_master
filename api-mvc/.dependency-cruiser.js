@@ -31,6 +31,15 @@ module.exports = {
       to: { path: "^src/(database|repositories)" },
     },
     {
+      name: "modelo-sem-framework-http",
+      severity: "error",
+      comment:
+        "As regras de negócio não devem depender do framework HTTP, ainda que "
+        + "o Controller as invoque.",
+      from: { path: "^src/(models|repositories)" },
+      to: { dependencyTypes: ["npm"], path: "^node_modules/(express|cors)" },
+    },
+    {
       name: "sem-ciclos",
       severity: "error",
       comment: "Dependências circulares dificultam testar módulos isoladamente.",
