@@ -1,82 +1,75 @@
 /**
- * Script de análise de desempenho — API única
+ * Testes de carga das APIs do experimento.
  *
- * Uso:
- *   node run.js                        → roda todos os cenários com carga padrão
- *   node run.js --connections 50       → define conexões simultâneas
- *   node run.js --duration 20          → define duração em segundos
- *   node run.js --scenario get-users --connections 10  --duration 20   → roda apenas um cenário
- *   node run.js --scenario post-users --connections 10  --duration 20   → roda apenas um cenário
- *   node run.js --scenario mixed --connections 10  --duration 20   → roda apenas um cenário
+ * Mede uma API por vez — as duas simultâneas disputariam CPU e banco.
  *
- * npm run bench:light    # 10 conexões × 10s  → smoke test, verificação rápida
- * npm run bench:medium   # 50 conexões × 20s  → carga moderada, resultado mais estável
- * npm run bench:heavy    # 100 conexões × 30s → carga alta, expõe gargalos
- * 
-*/
+ *   node run.js                                    api-mvc, na 3000
+ *   node run.js --url http://localhost:3001        api-hexagonal
+ *   node run.js --scenario get-users               um cenário só
+ *   npm run bench:medium                           50 conexões
+ */
 const { prepararBanco, encerrar } = require("./lib/banco")
 const { percentil, media } = require("./lib/percentis")
-const getUsers = require("./scenarios/get-users")
-const postUsers = require("./scenarios/post-users")
-const mixed = require("./scenarios/mixed")
 
-// ─── Configuração via argumentos de linha de comando ───────────────────────
-const args = process.argv.slice(2)
-const getArg = (name, fallback) => {
-  const idx = args.indexOf(`--${name}`)
-  return idx !== -1 ? args[idx + 1] : fallback
+const CENARIOS = {
+  "get-users":  require("./scenarios/get-users"),
+  "post-users": require("./scenarios/post-users"),
+  mixed:        require("./scenarios/mixed"),
 }
 
-const CONNECTIONS = Number(getArg("connections", 10))
-const DURATION    = Number(getArg("duration", 10))
-const SCENARIO    = getArg("scenario", "all")
+// ─── Parâmetros ───────────────────────────────────────────────────────────
+const args = process.argv.slice(2)
+const getArg = (nome, padrao) => {
+  const i = args.indexOf(`--${nome}`)
+  return i !== -1 ? args[i + 1] : padrao
+}
 
-// Volume da base usada nos cenários de leitura. É parâmetro do experimento:
-// mantenha o mesmo valor ao medir as duas implementações, senão a comparação
-// perde sentido.
-const SEED        = Number(getArg("seed", 1000))
+const API_URL     = getArg("url", process.env.API_URL || "http://localhost:3000")
+const CONEXOES    = Number(getArg("connections", 10))
+const DURACAO     = Number(getArg("duration", 10))
+const CENARIO     = getArg("scenario", "all")
 
-const API_URL = "http://localhost:3000"
+// Tamanho da base nos cenários de leitura. É parâmetro do experimento: use o
+// mesmo valor nas duas implementações, senão a comparação perde sentido.
+const SEED        = Number(getArg("seed", 100))
 
-const ALL_SCENARIOS = { "get-users": getUsers, "post-users": postUsers, mixed }
-const scenarios =
-  SCENARIO === "all"
-    ? Object.values(ALL_SCENARIOS)
-    : [ALL_SCENARIOS[SCENARIO]].filter(Boolean)
+const selecionados =
+  CENARIO === "all" ? Object.values(CENARIOS) : [CENARIOS[CENARIO]]
 
-// ─── Utilitários ──────────────────────────────────────────────────────────
-const fmt = (n) => (n == null ? "N/A" : `${n.toFixed(2)} ms`)
-const fmtRps = (n) => (n == null ? "N/A" : `${n.toFixed(0)} req/s`)
-const fmtPct = (n) => (n == null ? "N/A" : `${(n * 100).toFixed(2)} %`)
+if (selecionados.some((c) => !c)) {
+  console.error(
+    `Cenário desconhecido: "${CENARIO}". ` +
+    `Use um de: ${Object.keys(CENARIOS).join(", ")} ou "all".`
+  )
+  process.exit(1)
+}
+
+// ─── Métricas ─────────────────────────────────────────────────────────────
+const ms  = (n) => (n == null ? "N/A" : `${n.toFixed(2)} ms`)
+const rps = (n) => (n == null ? "N/A" : `${n.toFixed(0)} req/s`)
+const pct = (n) => (n == null ? "N/A" : `${(n * 100).toFixed(2)} %`)
 
 /**
- * Monta as métricas do cenário.
- *
- * Throughput conta apenas respostas 2xx: o `requests.mean` do autocannon
- * inclui 4xx e 5xx, que são requisições processadas, mas não com sucesso.
- *
- * A taxa de erros reúne respostas fora da faixa 2xx e falhas de conexão. Os
- * timeouts já estão contabilizados em `errors` pelo autocannon, e por isso
- * não são somados de novo.
+ * Throughput conta apenas respostas 2xx — 4xx e 5xx são requisições
+ * processadas, mas não com sucesso.
  *
  * Latência média e percentis saem das latências coletadas requisição a
  * requisição, porque o autocannon não expõe o p95.
  */
-function extractMetrics({ resultado, latencias }) {
+function calcularMetricas({ resultado, latencias }) {
   const ordenadas = [...latencias].sort((a, b) => a - b)
 
-  const sucesso    = resultado["2xx"]   || 0
-  const naoSucesso = resultado.non2xx   || 0
-  const conexao    = resultado.errors   || 0
-  const duracao    = resultado.duration || DURATION
+  const sucesso    = resultado["2xx"] || 0
+  const naoSucesso = resultado.non2xx || 0
+  const conexao    = resultado.errors || 0
+  const duracao    = resultado.duration || DURACAO
 
-  // Requisições que chegaram a ser enviadas: as respondidas mais as que
-  // falharam antes de obter resposta.
+  // Timeouts já entram em `errors`; somá-los de novo contaria duas vezes.
   const tentativas = sucesso + naoSucesso + conexao
 
   return {
-    rps:        duracao ? sucesso / duracao : null,
-    avg:        media(ordenadas),
+    throughput: duracao ? sucesso / duracao : null,
+    media:      media(ordenadas),
     p50:        percentil(ordenadas, 50),
     p95:        percentil(ordenadas, 95),
     p99:        percentil(ordenadas, 99),
@@ -85,76 +78,59 @@ function extractMetrics({ resultado, latencias }) {
     quatroxx:   resultado["4xx"] || 0,
     cincoxx:    resultado["5xx"] || 0,
     conexao,
-    timeouts:   resultado.timeouts || 0,
     tentativas,
     amostras:   ordenadas.length,
   }
 }
 
-function printResult(title, metrics) {
-  console.log(`\n${"─".repeat(72)}`)
-  console.log(` ${title}`)
-  console.log("─".repeat(72))
-  console.log(` Throughput   ${fmtRps(metrics.rps)}  (somente 2xx)`)
-  console.log(` Latência avg ${fmt(metrics.avg)}`)
-  console.log(` p50          ${fmt(metrics.p50)}`)
-  console.log(` p95          ${fmt(metrics.p95)}`)
-  console.log(` p99          ${fmt(metrics.p99)}`)
-  console.log(` Taxa de erro ${fmtPct(metrics.taxaErro)}`)
+function imprimir(nome, m) {
+  const linha = "─".repeat(72)
+  console.log(`\n${linha}\n ${nome}\n${linha}`)
+  console.log(` Throughput   ${rps(m.throughput)}  (somente 2xx)`)
+  console.log(` Latência avg ${ms(m.media)}`)
+  console.log(` p50          ${ms(m.p50)}`)
+  console.log(` p95          ${ms(m.p95)}`)
+  console.log(` p99          ${ms(m.p99)}`)
+  console.log(` Taxa de erro ${pct(m.taxaErro)}`)
   console.log(
-    ` Requisições  ${metrics.tentativas} enviadas · ` +
-    `${metrics.sucesso} com sucesso · ` +
-    `${metrics.quatroxx} 4xx · ${metrics.cincoxx} 5xx · ` +
-    `${metrics.conexao} de conexão (${metrics.timeouts} timeouts)`
+    ` Requisições  ${m.tentativas} enviadas · ${m.sucesso} com sucesso · ` +
+    `${m.quatroxx} 4xx · ${m.cincoxx} 5xx · ${m.conexao} de conexão`
   )
-  console.log(` Amostras     ${metrics.amostras} latências medidas`)
-  console.log("─".repeat(72))
+  console.log(` Amostras     ${m.amostras} latências medidas`)
+  console.log(linha)
 }
 
 // ─── Execução ─────────────────────────────────────────────────────────────
 async function main() {
-  console.log("\n╔══════════════════════════════════════════════════════════════╗")
-  console.log("║              Análise de Desempenho da API                    ║")
-  console.log("╚══════════════════════════════════════════════════════════════╝")
-  console.log(`\n  URL testada          : ${API_URL}`)
-  console.log(`  Conexões simultâneas : ${CONNECTIONS}`)
-  console.log(`  Duração por teste    : ${DURATION}s`)
-  console.log(`  Cenários             : ${SCENARIO}`)
-  console.log(`  Base para leitura    : ${SEED} usuários`)
+  console.log("\nTestes de carga")
+  console.log(`  API          : ${API_URL}`)
+  console.log(`  Conexões     : ${CONEXOES}`)
+  console.log(`  Duração      : ${DURACAO}s por cenário`)
+  console.log(`  Base leitura : ${SEED} usuários`)
 
-  for (const scenario of scenarios) {
+  for (const cenario of selecionados) {
+    console.log(`\n▶ ${cenario.name}`)
 
-    console.log(`\n\n▶ Cenário: ${scenario.name}`)
-
-    // Espera o cenário anterior drenar: requisições ainda em voo quando o
-    // autocannon encerra chegariam ao servidor depois do preparo e sujariam
-    // a contagem inicial deste cenário.
+    // Espera o cenário anterior drenar: requisições ainda em voo chegariam
+    // depois do preparo e sujariam a contagem inicial deste cenário.
     await new Promise((r) => setTimeout(r, 1000))
 
-    // Cada cenário parte do estado que declara, não do que o anterior deixou.
-    const registros = await prepararBanco(scenario.semearUsuarios ? SEED : 0)
-    console.log(`  Banco preparado: ${registros} usuários`)
+    const registros = await prepararBanco(cenario.semearUsuarios ? SEED : 0)
+    console.log(`  Base preparada: ${registros} usuários`)
+    process.stdout.write("  Medindo... ")
 
-    process.stdout.write(`  Testando... `)
-
-    const metrics = extractMetrics(
-      await scenario.run(API_URL, CONNECTIONS, DURATION)
+    const metricas = calcularMetricas(
+      await cenario.run(API_URL, CONEXOES, DURACAO)
     )
 
-    console.log(
-      `✓ ${fmtRps(metrics.rps)} | avg ${fmt(metrics.avg)} | ` +
-      `erros ${fmtPct(metrics.taxaErro)}`
-    )
-
-    printResult(scenario.name, metrics)
-
+    console.log("concluído")
+    imprimir(cenario.name, metricas)
   }
-
 }
 
 main()
-  .catch((err) => {
-    console.error("Erro ao executar testes:", err.message)
+  .catch((erro) => {
+    console.error("Falha ao executar os testes:", erro.message)
     process.exitCode = 1
   })
   .finally(encerrar)

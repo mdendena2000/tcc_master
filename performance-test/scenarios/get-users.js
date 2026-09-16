@@ -1,9 +1,6 @@
 const { executar } = require("../lib/executar")
 
-/**
- * Cenário: GET /users
- * Simula múltiplos clientes listando usuários simultaneamente.
- */
+/** Leitura pura: todas as conexões listando usuários. */
 async function run(baseUrl, connections, duration) {
   return executar({
     url: `${baseUrl}/users`,

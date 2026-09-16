@@ -1,13 +1,12 @@
 {
   "name": "performance-test",
   "version": "1.0.0",
-  "description": "",
+  "description": "Testes de carga das APIs do experimento comparativo",
   "main": "index.js",
   "scripts": {
     "start": "node run.js",
     "bench:light": "node run.js --connections 10 --duration 10",
-    "bench:medium": "node run.js --connections 50 --duration 20",
-    "bench:heavy": "node run.js --connections 100 --duration 30"
+    "bench:medium": "node run.js --connections 50 --duration 20"
   },
   "keywords": [],
   "author": "",

@@ -58,7 +58,8 @@ const app = createServer({
   board: boardController,
   task: taskController,
 })
-const PORT = Number(process.env.PORT) || 3000
+
+const PORT = Number(process.env.PORT) || 3001
 
 app.listen(PORT, () => {
   console.log(`Hexagonal API running on port ${PORT}`)
