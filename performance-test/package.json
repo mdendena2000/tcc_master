@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node run.js",
-    "bench:light": "node run.js --connections 10 --duration 10",
-    "bench:medium": "node run.js --connections 50 --duration 20"
+    "bench:light": "node run.js --connections 10 --duration 120",
+    "bench:medium": "node run.js --connections 50 --duration 120",
+    "bench:mvc": "node run.js --url http://localhost:3000 --connections 50 --duration 120",
+    "bench:hexagonal": "node run.js --url http://localhost:3001 --connections 50 --duration 120"
   },
   "keywords": [],
   "author": "",

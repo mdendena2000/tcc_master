@@ -54,6 +54,7 @@ export class TaskController {
       const status = validateEnum(req.body.status, "status", TASK_STATUSES)
       const task = await this.model.findById(req.params.id as string)
 
+      // RN02: o status só avança para o próximo da sequência
       if (NEXT_STATUS[task.status] !== status) {
         throw new ConflictError(
           `Transição de status inválida: ${task.status} -> ${status}`

@@ -86,8 +86,8 @@ Requer `requests` (`pip install requests`).
 cd performance-test
 npm install
 
-npm run bench:light     # 10 conexões
-npm run bench:medium    # 50 conexões
+npm run bench:light     # 10 conexões × 120s
+npm run bench:medium    # 50 conexões × 120s
 ```
 
 Mede o `api-mvc` por padrão. Para o `api-hexagonal`:

@@ -115,6 +115,7 @@ export class TaskModel {
     return validateEnum(priority, "priority", TASK_PRIORITIES)
   }
 
+  /** RN03 */
   private async ensureAssigneeExists(assigneeId: string | null): Promise<void> {
     if (!assigneeId) return
     if (!(await this.userRepository.findById(assigneeId))) {
@@ -122,6 +123,7 @@ export class TaskModel {
     }
   }
 
+  /** RN05 */
   private async ensureTitleIsUniqueInBoard(
     boardId: string,
     title: string,

@@ -40,6 +40,7 @@ export class BoardModel {
   async delete(id: string): Promise<void> {
     const board = await this.findById(id)
 
+    // RN04
     if ((await this.repository.countActiveTasks(board.id)) > 0) {
       throw new ConflictError(
         "O quadro possui tarefas pendentes ou em andamento e não pode ser excluído"
