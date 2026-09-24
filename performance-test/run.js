@@ -10,11 +10,12 @@
  */
 const { prepararBanco, encerrar } = require("./lib/banco")
 const { percentil, media } = require("./lib/percentis")
+const { salvar } = require("./lib/resultado")
 
 const CENARIOS = {
-  "get-users":  require("./scenarios/get-users"),
+  "get-users": require("./scenarios/get-users"),
   "post-users": require("./scenarios/post-users"),
-  mixed:        require("./scenarios/mixed"),
+  mixed: require("./scenarios/mixed"),
 }
 
 // ─── Parâmetros ───────────────────────────────────────────────────────────
@@ -24,14 +25,14 @@ const getArg = (nome, padrao) => {
   return i !== -1 ? args[i + 1] : padrao
 }
 
-const API_URL     = getArg("url", process.env.API_URL || "http://localhost:3000")
-const CONEXOES    = Number(getArg("connections", 10))
-const DURACAO     = Number(getArg("duration", 10))
-const CENARIO     = getArg("scenario", "all")
+const API_URL = getArg("url", process.env.API_URL || "http://localhost:3000")
+const CONEXOES = Number(getArg("connections", 10))
+const DURACAO = Number(getArg("duration", 20))
+const CENARIO = getArg("scenario", "all")
 
 // Tamanho da base nos cenários de leitura. É parâmetro do experimento: use o
 // mesmo valor nas duas implementações, senão a comparação perde sentido.
-const SEED        = Number(getArg("seed", 100))
+const SEED = Number(getArg("seed", 100))
 
 const selecionados =
   CENARIO === "all" ? Object.values(CENARIOS) : [CENARIOS[CENARIO]]
@@ -45,7 +46,7 @@ if (selecionados.some((c) => !c)) {
 }
 
 // ─── Métricas ─────────────────────────────────────────────────────────────
-const ms  = (n) => (n == null ? "N/A" : `${n.toFixed(2)} ms`)
+const ms = (n) => (n == null ? "N/A" : `${n.toFixed(2)} ms`)
 const rps = (n) => (n == null ? "N/A" : `${n.toFixed(0)} req/s`)
 const pct = (n) => (n == null ? "N/A" : `${(n * 100).toFixed(2)} %`)
 
@@ -59,27 +60,27 @@ const pct = (n) => (n == null ? "N/A" : `${(n * 100).toFixed(2)} %`)
 function calcularMetricas({ resultado, latencias }) {
   const ordenadas = [...latencias].sort((a, b) => a - b)
 
-  const sucesso    = resultado["2xx"] || 0
+  const sucesso = resultado["2xx"] || 0
   const naoSucesso = resultado.non2xx || 0
-  const conexao    = resultado.errors || 0
-  const duracao    = resultado.duration || DURACAO
+  const conexao = resultado.errors || 0
+  const duracao = resultado.duration || DURACAO
 
   // Timeouts já entram em `errors`; somá-los de novo contaria duas vezes.
   const tentativas = sucesso + naoSucesso + conexao
 
   return {
     throughput: duracao ? sucesso / duracao : null,
-    media:      media(ordenadas),
-    p50:        percentil(ordenadas, 50),
-    p95:        percentil(ordenadas, 95),
-    p99:        percentil(ordenadas, 99),
-    taxaErro:   tentativas ? (naoSucesso + conexao) / tentativas : 0,
+    media: media(ordenadas),
+    p50: percentil(ordenadas, 50),
+    p95: percentil(ordenadas, 95),
+    p99: percentil(ordenadas, 99),
+    taxaErro: tentativas ? (naoSucesso + conexao) / tentativas : 0,
     sucesso,
-    quatroxx:   resultado["4xx"] || 0,
-    cincoxx:    resultado["5xx"] || 0,
+    quatroxx: resultado["4xx"] || 0,
+    cincoxx: resultado["5xx"] || 0,
     conexao,
     tentativas,
-    amostras:   ordenadas.length,
+    amostras: ordenadas.length,
   }
 }
 
@@ -100,13 +101,32 @@ function imprimir(nome, m) {
   console.log(linha)
 }
 
-// ─── Execução ─────────────────────────────────────────────────────────────
+async function conferirDisponibilidade() {
+
+  const http = require(API_URL.startsWith("https") ? "https" : "http")
+
+  await new Promise((resolve, reject) => {
+    const req = http.get(`${API_URL}/users`, (res) => {
+      res.resume()
+      resolve()
+    })
+    req.setTimeout(3000, () => req.destroy(new Error("tempo esgotado")))
+    req.on("error", () =>
+      reject(new Error(`API não respondeu em ${API_URL}. Suba-a antes de medir.`))
+    )
+  })
+}
+
 async function main() {
+  await conferirDisponibilidade()
+
   console.log("\nTestes de carga")
   console.log(`  API          : ${API_URL}`)
   console.log(`  Conexões     : ${CONEXOES}`)
   console.log(`  Duração      : ${DURACAO}s por cenário`)
   console.log(`  Base leitura : ${SEED} usuários`)
+
+  const coletado = {}
 
   for (const cenario of selecionados) {
     console.log(`\n▶ ${cenario.name}`)
@@ -125,7 +145,20 @@ async function main() {
 
     console.log("concluído")
     imprimir(cenario.name, metricas)
+    coletado[cenario.name] = metricas
   }
+
+  const arquivo = salvar(
+    {
+      data: new Date().toISOString(),
+      url: API_URL,
+      conexoes: CONEXOES,
+      duracao: DURACAO,
+      seed: SEED,
+    },
+    coletado
+  )
+  console.log(`\nResultados em ${arquivo}`)
 }
 
 main()

@@ -86,8 +86,8 @@ Requer `requests` (`pip install requests`).
 cd performance-test
 npm install
 
-npm run bench:light     # 10 conexões × 120s
-npm run bench:medium    # 50 conexões × 120s
+npm run bench:light     # 10 conexões × 20s
+npm run bench:medium    # 50 conexões × 20s
 ```
 
 Mede o `api-mvc` por padrão. Para o `api-hexagonal`:
@@ -101,7 +101,7 @@ API_URL=http://localhost:3001 npm run bench:medium
 |---|---|---|
 | `--url` | `http://localhost:3000` | API a medir |
 | `--connections` | 10 | conexões simultâneas |
-| `--duration` | 10 | segundos por cenário |
+| `--duration` | 20 | segundos por cenário |
 | `--seed` | 100 | base nos cenários de leitura |
 | `--scenario` | `all` | `get-users`, `post-users`, `mixed` |
 

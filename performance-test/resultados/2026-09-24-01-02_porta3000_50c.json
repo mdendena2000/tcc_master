@@ -1,0 +1,53 @@
+{
+  "execucao": {
+    "data": "2026-09-24T01:02:32.566Z",
+    "url": "http://localhost:3000",
+    "conexoes": 50,
+    "duracao": 10,
+    "seed": 100
+  },
+  "cenarios": {
+    "GET /users": {
+      "throughput": 1298.303393213573,
+      "media": 38.37966869836264,
+      "p50": 36.614791,
+      "p95": 47.7192456,
+      "p99": 59.9696692,
+      "taxaErro": 0,
+      "sucesso": 13009,
+      "quatroxx": 0,
+      "cincoxx": 0,
+      "conexao": 0,
+      "tentativas": 13009,
+      "amostras": 13009
+    },
+    "POST /users": {
+      "throughput": 25.5234297108674,
+      "media": 1702.1883921679682,
+      "p50": 1684.388214,
+      "p95": 1812.32622225,
+      "p99": 1968.5441368499999,
+      "taxaErro": 0,
+      "sucesso": 256,
+      "quatroxx": 0,
+      "cincoxx": 0,
+      "conexao": 0,
+      "tentativas": 256,
+      "amostras": 256
+    },
+    "Misto (70% GET / 30% POST)": {
+      "throughput": 125.5234297108674,
+      "media": 390.6052031834785,
+      "p50": 420.248848,
+      "p95": 629.8461080000001,
+      "p99": 656.7812262599999,
+      "taxaErro": 0,
+      "sucesso": 1259,
+      "quatroxx": 0,
+      "cincoxx": 0,
+      "conexao": 0,
+      "tentativas": 1259,
+      "amostras": 1259
+    }
+  }
+}
