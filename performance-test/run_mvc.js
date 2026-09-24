@@ -1,12 +1,14 @@
 /**
- * Testes de carga das APIs do experimento.
+ * Testes de carga da API MVC.
  *
- * Mede uma API por vez — as duas simultâneas disputariam CPU e banco.
+ * Configuração fixa:
+ *   API:      http://localhost:3000
+ *   Conexões: 50
+ *   Duração:  20 segundos por cenário
+ *   Seed:     100 usuários
  *
- *   node run.js                                    api-mvc, na 3000
- *   node run.js --url http://localhost:3001        api-hexagonal
- *   node run.js --scenario get-users               um cenário só
- *   npm run bench:medium                           50 conexões
+ * Execução:
+ *   node run.js
  */
 const { prepararBanco, encerrar } = require("./lib/banco")
 const { percentil, media } = require("./lib/percentis")
@@ -18,41 +20,26 @@ const CENARIOS = {
   mixed: require("./scenarios/mixed"),
 }
 
-// ─── Parâmetros ───────────────────────────────────────────────────────────
-const args = process.argv.slice(2)
+// ─── Configuração fixa ────────────────────────────────────────────────────
 
-const getArg = (nome, padrao) => {
-  const i = args.indexOf(`--${nome}`)
-  return i !== -1 ? args[i + 1] : padrao
-}
+const API_URL = "http://localhost:3000"
+const CONEXOES = 50
+const DURACAO = 20
+const SEED = 100
 
-const API_URL = getArg("url", process.env.API_URL || "http://localhost:3000")
-const CONEXOES = Number(getArg("connections", 10))
-const DURACAO = Number(getArg("duration", 20))
-const CENARIO = getArg("scenario", "all")
-
-// Tamanho da base nos cenários de leitura. É parâmetro do experimento: use o
-// mesmo valor nas duas implementações, senão a comparação perde sentido.
-const SEED = Number(getArg("seed", 100))
-
-const selecionados = CENARIO === "all" ? Object.values(CENARIOS) : [CENARIOS[CENARIO]]
-
-if (selecionados.some((c) => !c)) {
-  console.error(`Cenário desconhecido: "${CENARIO}". ` + `Use um de: ${Object.keys(CENARIOS).join(", ")} ou "all".`)
-  process.exit(1)
-}
+const selecionados = Object.values(CENARIOS)
 
 // ─── Métricas ─────────────────────────────────────────────────────────────
+
 const ms = (n) => (n == null ? "N/A" : `${n.toFixed(2)} ms`)
 const rps = (n) => (n == null ? "N/A" : `${n.toFixed(0)} req/s`)
 const pct = (n) => (n == null ? "N/A" : `${(n * 100).toFixed(2)} %`)
 
 /**
- * Throughput conta apenas respostas 2xx — 4xx e 5xx são requisições
- * processadas, mas não com sucesso.
+ * Throughput conta apenas respostas 2xx.
  *
- * Latência média e percentis saem das latências coletadas requisição a
- * requisição, porque o autocannon não expõe o p95.
+ * Latência média e percentis são calculados a partir das
+ * latências coletadas requisição a requisição.
  */
 function calcularMetricas({ resultado, latencias }) {
   const ordenadas = [...latencias].sort((a, b) => a - b)
@@ -62,7 +49,6 @@ function calcularMetricas({ resultado, latencias }) {
   const conexao = resultado.errors || 0
   const duracao = resultado.duration || DURACAO
 
-  // Timeouts já entram em `errors`; somá-los de novo contaria duas vezes.
   const tentativas = sucesso + naoSucesso + conexao
 
   return {
@@ -71,7 +57,9 @@ function calcularMetricas({ resultado, latencias }) {
     p50: percentil(ordenadas, 50),
     p95: percentil(ordenadas, 95),
     p99: percentil(ordenadas, 99),
-    taxaErro: tentativas ? (naoSucesso + conexao) / tentativas : 0,
+    taxaErro: tentativas
+      ? (naoSucesso + conexao) / tentativas
+      : 0,
     sucesso,
     quatroxx: resultado["4xx"] || 0,
     cincoxx: resultado["5xx"] || 0,
@@ -82,7 +70,6 @@ function calcularMetricas({ resultado, latencias }) {
 }
 
 function imprimir(nome, m) {
-
   const linha = "─".repeat(72)
 
   console.log(`\n${linha}\n ${nome}\n${linha}`)
@@ -102,24 +89,27 @@ function imprimir(nome, m) {
 }
 
 async function conferirDisponibilidade() {
-
   const http = require("http")
 
   await new Promise((resolve, reject) => {
-
     const req = http.get(`${API_URL}/users`, (res) => {
       res.resume()
       resolve()
     })
 
-    req.setTimeout(3000, () => req.destroy(new Error("tempo esgotado")))
-
-    req.on("error", () =>
-      reject(new Error(`API não respondeu em ${API_URL}. Suba-a antes de medir.`))
+    req.setTimeout(
+      3000,
+      () => req.destroy(new Error("tempo esgotado"))
     )
 
+    req.on("error", () =>
+      reject(
+        new Error(
+          `API não respondeu em ${API_URL}. Suba-a antes de medir.`
+        )
+      )
+    )
   })
-
 }
 
 async function main() {
@@ -136,20 +126,28 @@ async function main() {
   for (const cenario of selecionados) {
     console.log(`\n▶ ${cenario.name}`)
 
-    // Espera o cenário anterior drenar: requisições ainda em voo chegariam
-    // depois do preparo e sujariam a contagem inicial deste cenário.
-    await new Promise((r) => setTimeout(r, 1000))
+    // Aguarda requisições do cenário anterior terminarem.
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    const registros = await prepararBanco(cenario.semearUsuarios ? SEED : 0)
+    const registros = await prepararBanco(
+      cenario.semearUsuarios ? SEED : 0
+    )
+
     console.log(`  Base preparada: ${registros} usuários`)
     process.stdout.write("  Medindo... ")
 
-    const metricas = calcularMetricas(
-      await cenario.run(API_URL, CONEXOES, DURACAO)
+    const resultado = await cenario.run(
+      API_URL,
+      CONEXOES,
+      DURACAO
     )
 
+    const metricas = calcularMetricas(resultado)
+
     console.log("concluído")
+
     imprimir(cenario.name, metricas)
+
     coletado[cenario.name] = metricas
   }
 
@@ -163,12 +161,17 @@ async function main() {
     },
     coletado
   )
+
   console.log(`\nResultados em ${arquivo}`)
 }
 
 main()
   .catch((erro) => {
-    console.error("Falha ao executar os testes:", erro.message)
+    console.error(
+      "Falha ao executar os testes:",
+      erro.message
+    )
+
     process.exitCode = 1
   })
   .finally(encerrar)

@@ -4,11 +4,7 @@
   "description": "Testes de carga das APIs do experimento comparativo",
   "main": "index.js",
   "scripts": {
-    "start": "node run.js",
-    "bench:light": "node run.js --connections 10 --duration 20",
-    "bench:medium": "node run.js --connections 50 --duration 20",
-    "bench:mvc": "node run.js --url http://localhost:3000 --connections 50 --duration 20",
-    "bench:hexagonal": "node run.js --url http://localhost:3001 --connections 50 --duration 20"
+    "start": "node run.js"
   },
   "keywords": [],
   "author": "",

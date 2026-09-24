@@ -13,12 +13,11 @@ const DIRETORIO = path.join(__dirname, "..", "resultados")
 function salvar(execucao, cenarios) {
   fs.mkdirSync(DIRETORIO, { recursive: true })
 
-  const porta = new URL(execucao.url).port || "80"
+  const porta = new URL(execucao.url).port
+
   const quando = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-")
-  const arquivo = path.join(
-    DIRETORIO,
-    `${quando}_porta${porta}_${execucao.conexoes}c.json`
-  )
+
+  const arquivo = path.join(DIRETORIO, `${quando}_porta${porta}_${execucao.conexoes}c.json`)
 
   fs.writeFileSync(
     arquivo,

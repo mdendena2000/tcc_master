@@ -31,8 +31,11 @@ function percentil(ordenadas, p) {
 }
 
 function media(amostras) {
+
   if (!amostras.length) return null
+
   return amostras.reduce((soma, x) => soma + x, 0) / amostras.length
+
 }
 
 module.exports = { percentil, media }
