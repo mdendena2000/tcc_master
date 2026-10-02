@@ -56,4 +56,8 @@ async function run(baseUrl, connections, duration) {
 // Usa a mesma base do cenário de leitura. Começar vazio faria as primeiras
 // leituras devolverem lista vazia e as últimas, milhares de registros — a
 // latência cresceria durante a execução e distorceria os percentis.
-module.exports = { run, name: "Misto (70% GET / 30% POST)", semearUsuarios: true }
+// O 70/30 é das conexões, não das requisições: como o POST é muito mais
+// lento, ele completa menos chamadas na mesma janela e o tráfego real fica
+// perto de 81% GET / 19% POST. A distorção é igual nas duas APIs, então não
+// enviesa a comparação — mas o nome não pode prometer o que não entrega.
+module.exports = { run, name: "Misto (70/30 das conexões)", semearUsuarios: true }

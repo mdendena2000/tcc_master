@@ -1,14 +1,12 @@
 {
   "name": "performance-test",
   "version": "1.0.0",
-  "description": "Testes de carga das APIs do experimento comparativo",
-  "main": "index.js",
-  "scripts": {
-    "start": "node run.js"
-  },
-  "keywords": [],
-  "author": "",
+  "description": "Testes de carga do experimento comparativo entre MVC e Hexagonal",
   "license": "ISC",
+  "scripts": {
+    "experimento": "node experimento.js",
+    "relatorio": "node relatorio.js"
+  },
   "dependencies": {
     "autocannon": "^8.0.0",
     "dotenv": "^17.4.2",

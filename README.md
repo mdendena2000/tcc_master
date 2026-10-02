@@ -85,28 +85,55 @@ Requer `requests` (`pip install requests`).
 ```bash
 cd performance-test
 npm install
-
-npm run bench:light     # 10 conexões × 20s
-npm run bench:medium    # 50 conexões × 20s
 ```
 
-Mede o `api-mvc` por padrão. Para o `api-hexagonal`:
+As duas APIs precisam estar no ar — a 3000 e a 3001 —, mas só uma recebe carga
+por vez: medir as duas em paralelo faria uma disputar CPU e banco com a outra.
 
 ```bash
-node run.js --url http://localhost:3001
-API_URL=http://localhost:3001 npm run bench:medium
+node experimento.js
+node experimento.js --repeticoes 5 --duracao 20
 ```
 
 | Flag | Padrão | |
 |---|---|---|
-| `--url` | `http://localhost:3000` | API a medir |
-| `--connections` | 10 | conexões simultâneas |
-| `--duration` | 20 | segundos por cenário |
+| `--repeticoes` | 3 | repetições de cada cenário em cada API |
+| `--conexoes` | 50 | conexões simultâneas |
+| `--duracao` | 20 | segundos por medição |
 | `--seed` | 100 | base nos cenários de leitura |
-| `--scenario` | `all` | `get-users`, `post-users`, `mixed` |
+| `--aquecimento` | 8 | segundos descartados antes de coletar |
+| `--ordem` | `pareada` | encadeamento das medições |
+| `--mvc` | `http://localhost:3000` | URL da API MVC |
+| `--hexagonal` | `http://localhost:3001` | URL da API Hexagonal |
 
-Cada cenário prepara o banco antes de rodar: leitura e misto partem de `--seed`
-usuários, escrita parte da tabela vazia.
+São três cenários, e cada um prepara o banco antes de rodar: `GET /users` e o
+misto partem de `--seed` usuários, `POST /users` parte da tabela vazia.
 
-**Meça uma API por vez** — as duas juntas disputariam CPU e banco. E use o
-mesmo `--seed` nas duas, senão os números não são comparáveis.
+### Ordem das medições
+
+Medir uma API inteira e depois a outra favorece sistematicamente a segunda:
+cache do SO, buffers do PostgreSQL e JIT do V8 chegam aquecidos. Nesse
+ambiente o efeito chegou a 51% — dez vezes maior que a diferença entre as
+arquiteturas. Por isso o `--ordem`:
+
+| Valor | |
+|---|---|
+| `pareada` | cada cenário mede as duas APIs em sequência, invertendo quem abre o par |
+| `mvc` | ordem fixa, MVC primeiro |
+| `hexagonal` | ordem fixa, Hexagonal primeiro |
+
+A `pareada` é o padrão porque aproxima no tempo as duas medições que serão
+comparadas: uma oscilação da máquina atinge as duas de forma parecida em vez
+de entrar só numa delas. As ordens fixas servem para medir o próprio viés de
+ordem, não para concluir.
+
+### Relatórios
+
+O JSON é reescrito a cada medição, com `parcial: true` enquanto a coleta não
+termina — interromper no meio preserva o que já foi coletado. Para reimprimir
+o relatório de um arquivo salvo:
+
+```bash
+node relatorio.js resultados/<arquivo>.json
+node relatorio.js resultados/<arquivo>.json --bruto   # valores por repetição
+```
